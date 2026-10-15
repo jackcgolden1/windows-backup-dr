@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   pull_request:
@@ -48,3 +48,38 @@ jobs:
           $config.Run.Exit = $true
           $config.Output.Verbosity = "Detailed"
           Invoke-Pester -Configuration $config
+
+  deploy:
+    name: Deploy to AWS
+    needs: [terraform, powershell]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL }}
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to AWS with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::594116288653:role/windows-backup-dr-github-actions
+          aws-region: us-east-1
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Initialize
+        run: terraform init
+
+      - name: Plan
+        run: terraform plan -out=tfplan
+
+      - name: Apply
+        run: terraform apply -auto-approve tfplan
