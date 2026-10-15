@@ -7,26 +7,16 @@ Automated nightly SQL Server backups to Amazon S3 that are **restore-tested ever
 ## Architecture
 
 ```mermaid
-flowchart LR
-  subgraph GitHub
-    PR[Pull request] --> CI[Terraform checks + Pester tests]
-    CI --> Merge[Merge to main]
-    Merge --> Gate{Manual approval}
-    Gate --> Deploy[terraform apply]
-  end
-
-  Deploy -- OIDC temporary credentials --> SSM
-
-  subgraph AWS["AWS us-east-1"]
-    subgraph VPC["VPC 10.0.0.0/16 - no inbound ports"]
-      EC2[Windows Server 2022 + SQL Server Express]
-    end
-    SSM[Systems Manager schedules] --> EC2
-    EC2 -- nightly backup --> S3[(S3 bucket - encrypted, versioned)]
-    S3 -- latest backup --> EC2
-    EC2 -- success / failure metrics --> CW[CloudWatch alarms]
-    CW --> SNS[SNS] --> Email[Email alert]
-  end
+flowchart TB
+  PR[Pull request] --> CI[Tests: Terraform + Pester]
+  CI --> Gate{Manual approval}
+  Gate --> Deploy[terraform apply via OIDC]
+  Deploy --> SSM[Systems Manager schedules]
+  SSM --> EC2[Windows Server + SQL Server]
+  EC2 -->|nightly backup| S3[(Encrypted S3 bucket)]
+  S3 -->|daily restore test| EC2
+  EC2 -->|pass / fail metric| CW[CloudWatch alarm]
+  CW --> Email[SNS email alert]
 ```
 
 ## How it works
