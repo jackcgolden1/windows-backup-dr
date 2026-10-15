@@ -16,7 +16,7 @@ resource "aws_iam_role" "github_actions" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:jackcgolden1/windows-backup-dr:environment:production"
+            "token.actions.githubusercontent.com:sub" = "repo:jackcgolden1@300286360/windows-backup-dr@1416330360:environment:production"
           }
         }
       }
