@@ -25,6 +25,10 @@ resource "aws_instance" "server" {
     encrypted   = true
   }
 
+  lifecycle {
+    ignore_changes = [ami]
+  }
+
   tags = {
     Name = "windows-backup-dr-server"
   }
