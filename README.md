@@ -59,15 +59,6 @@ Changing a PowerShell script and merging it is how a new version gets deployed t
 4. **The OIDC login was rejected.** My repo uses GitHub's immutable subject format (account and repo IDs in the token), so I updated the IAM trust policy to match.
 5. **The pipeline kept redeploying unchanged scripts.** Windows (CRLF) vs. Linux (LF) line endings made the same file look different. I normalized line endings in Terraform.
 
-## Screenshots
-
-| | |
-|---|---|
-| Pipeline waiting for approval | ![Approval](docs/images/approval.png) |
-| Successful deploy | ![Deploy](docs/images/deploy.png) |
-| Backups in S3 | ![S3](docs/images/s3-backups.png) |
-| Alarm email | ![Alert](docs/images/alert-email.png) |
-
 ## Known limitations
 
 - Scheduled jobs only run while the server is on; I stop it to save money, so the alarm fires on days it's off.
