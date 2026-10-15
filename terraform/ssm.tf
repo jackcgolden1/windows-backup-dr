@@ -9,7 +9,7 @@ resource "aws_ssm_association" "backup" {
   }
 
   parameters = {
-    commands = file("${path.module}/../scripts/Backup-Database.ps1")
+    commands = replace(file("${path.module}/../scripts/Backup-Database.ps1"), "\r\n", "\n")
   }
 }
 
@@ -24,6 +24,6 @@ resource "aws_ssm_association" "restore_test" {
   }
 
   parameters = {
-    commands = file("${path.module}/../scripts/Test-Restore.ps1")
+    commands = replace(file("${path.module}/../scripts/Test-Restore.ps1"), "\r\n", "\n")
   }
 }
