@@ -1,4 +1,4 @@
-# Windows Server Backup & Monitoring on AWS
+# SQL Server Backup Pipeline on AWS
 
 Automated nightly SQL Server backups to Amazon S3 that are **restore-tested every day**, with CloudWatch alerts on failure — all built with Terraform and deployed through an approval-gated GitHub Actions pipeline that logs into AWS with OIDC (no stored keys).
 
